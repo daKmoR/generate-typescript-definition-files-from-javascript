@@ -60,7 +60,7 @@ helpers.tests.ts:8:19 - error TS2345: Argument of type '"two"' is not assignable
 Found 1 error.
 ```
 
-### Let's make the same in JavaScript
+#### Let's make the same in JavaScript
 
 For the tests only the import change to `*.js`.
 
@@ -81,11 +81,11 @@ export function square(number) {
 }
 ```
 
-And our if we go back to the test now we do not see that `square('two')` is wrong :(.
+So if we now go back to the test we do not see that `square('two')` is wrong 😭.
 
 ![02-js-square-two](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/02-js-square-two.png)
 
-So that is the power of types. But we can make it work for JavaScript as well :hugs:
+So that is the power of types. But we can make it work for JavaScript as well 🤗
 
 Let's add types via JsDoc
 
@@ -136,7 +136,7 @@ test/helpers.tests.js:8:19 - error TS2345: Argument of type '"two"' is not assig
 Found 1 error.
 ```
 
-#### Enhancing our code
+### Enhancing our code
 
 Let's assume we want to also add an offset (best I could come up with :see_no_evil:)
 e.g.
@@ -148,7 +148,7 @@ expect(square(2, 'ten')).to.equal(14);
 
 First up `TypeScript`:
 
-```
+```ts
 export function square(number: number, offset = 0) {
   return number * number + offset;
 }
@@ -191,7 +191,7 @@ You will also want to provide those types to your users.
 That means you will need to have `*.d.ts` files in the package you are publishing.
 As those are the only files that `TypeScript` respects by default in the `node_modules` folder.
 
-##### What does it means for TypeScript?
+#### What does it means for TypeScript?
 
 When we publish we will run `tsc` with these settings
 
@@ -224,7 +224,7 @@ But it probably will be in the future. The original [issue](https://github.com/m
 
 And it is working so great that we are using it even in production for [open-wc](https://github.com/open-wc/open-wc/blob/master/package.json#L7).
 
-> WARNING
+> !WARNING!
 > This is an unsupported version => if something does not work no one is going to fix it.
 > Therefore if your use-case is not supported you will need to wait for the official release of TypeScript to support it.
 
