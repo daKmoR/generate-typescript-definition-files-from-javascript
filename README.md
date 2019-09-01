@@ -9,7 +9,7 @@ First of let me say that I have been putting of this blog post for quite a while
 I am a little afraid that I am not going to do TypeScript justice.
 The reason for that is that we are going to use it heavily - but in a rather indirect way.
 
-See - we are a big fan of a [buildless]() development setup. We have [a post]() or [two]() about it :grimmacing:
+See - we are a big fan of a [buildless](https://dev.to/open-wc/on-the-bleeding-edge-3cb8) development setup. We have [a post](https://dev.to/open-wc/developing-without-a-build-1-introduction-26ao) or [two](https://dev.to/open-wc/developing-without-a-build-2-es-dev-server-1cf5) about it 😬
 It is [our belief](https://open-wc.org/about/rationales.html) that it is the best way to bring developers (you) and the platform (browser) back on the same table.
 
 Knowing this makes it hard to root for TypeScript as it is a [Transpiler Language]() - in other words, it requires a build step.
@@ -27,7 +27,7 @@ expect(square(2)).to.equal(4);
 expect(square('two')).to.equal(4);
 ```
 
-Our plan is to accept a number and a string and return the power of it with the default of power of 2 (e.g. square it).
+Our plan is to accept a number or string and return the square of it.
 
 Let's implement it with TypeScript:
 
@@ -42,7 +42,7 @@ So yeah I know what you have been thinking - a string as an argument?
 While implementing we found out that it was a bad idea.
 And thanks to the power of types we can just go back to our code/tests and tada we immediately see in vscode that `square('two')` is not working.
 
-![01-ts-square-two](https://github.com/daKmoR/generate-typescript-definition-files-from-javascript/blob/master/images/01-ts-square-two.png)
+![01-ts-square-two](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/01-ts-square-two.png)
 
 And we will, of course, get the same if we try to run `tsc`.
 
@@ -83,7 +83,7 @@ export function square(number) {
 
 And our if we go back to the test now we do not see that `square('two')` is wrong :(.
 
-![02-js-square-two](https://github.com/daKmoR/generate-typescript-definition-files-from-javascript/blob/master/images/02-js-square-two.png)
+![02-js-square-two](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/02-js-square-two.png)
 
 So that is the power of types. But we can make it work for JavaScript as well :hugs:
 
@@ -122,7 +122,7 @@ and configure TypeScript to check for JavaScript as well by adding a `tsconfig.j
 
 Doing this allows as to get exactly the same behaviour in VSCode as with TypeScript.
 
-![03-js-square-two-typed](https://github.com/daKmoR/generate-typescript-definition-files-from-javascript/blob/master/images/03-js-square-two-typed.png)
+![03-js-square-two-typed](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/03-js-square-two-typed.png)
 
 We even get the same behaviour when running `tsc`.
 
@@ -239,7 +239,7 @@ So now that we have all the information. Let's just make it work.
 2. Use the forked TypeScript `npm i -D typescript-temporary-fork-for-jsdoc`
 3. Have a `tsconfig.json` with at least
 
-```json
+```js
 "allowJs": true,
 "checkJs": true,
 ```
@@ -247,7 +247,7 @@ So now that we have all the information. Let's just make it work.
 4. Do "type linting" via `tsc`
 5. Have `tsconfig.build.json` with at least
 
-```json
+```js
 "declaration": true,
 "allowJs": true,
 "checkJs": true,
