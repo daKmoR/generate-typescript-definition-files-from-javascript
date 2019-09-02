@@ -5,7 +5,7 @@ description: -
 tags: javascript, typescript, jsdoc, buildless
 ---
 
-First of let me say that I have been putting of this blog post for quite a while.
+First of all let me say that I have been putting this blog post off for quite a while.
 I am a little afraid that I am not going to do TypeScript justice.
 The reason for that is that we are going to use it heavily - but in a rather indirect way.
 
