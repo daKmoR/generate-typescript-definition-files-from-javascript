@@ -5,9 +5,9 @@ description: -
 tags: javascript, typescript, jsdoc, buildless
 ---
 
-At [open-wc](https://open-wc.org), we are big fans of [buildless](https://dev.to/open-wc/on-the-bleeding-edge-3cb8) development setups. We have [a post](https://dev.to/open-wc/developing-without-a-build-1-introduction-26ao) or [two](https://dev.to/open-wc/developing-without-a-build-2-es-dev-server-1cf5) about it 😄. [We believe](https://open-wc.org/about/rationales.html) that the future is all about coming back to the web platform. That means relying on native browser features in preference to userland or JavaScript solutions or development tools. That's why we have made it our mission to provide you the developer with the tools and techniques to use the platform *today*, even before legacy browsers are finally dropped.
+At [open-wc](https://open-wc.org), we are big fans of [buildless](https://dev.to/open-wc/on-the-bleeding-edge-3cb8) development setups. We have [a post](https://dev.to/open-wc/developing-without-a-build-1-introduction-26ao) or [two](https://dev.to/open-wc/developing-without-a-build-2-es-dev-server-1cf5) about it 😄. [We believe](https://open-wc.org/about/rationales.html) that the future is all about coming back to the web platform. That means relying on native browser features in preference to userland or JavaScript solutions or development tools. That's why we have made it our mission to provide you the developer with the tools and techniques to use the platform _today_, even before legacy browsers are finally dropped.
 
-This approach grants us tremendous advantages in <abbr title="developer experience">DX</abbr>, performance, and accessibility, but there are drawbacks. JavaScript, famously, is dynamically typed. Developers who want to enjoy type checking at development time will typically reach for Microsoft's TypeScript, Facebook's Flow, or Google's Clojure compiler. All of these require a build step. 
+This approach grants us tremendous advantages in <abbr title="developer experience">DX</abbr>, performance, and accessibility, but there are drawbacks. JavaScript, famously, is dynamically typed. Developers who want to enjoy type checking at development time will typically reach for Microsoft's TypeScript, Facebook's Flow, or Google's Clojure compiler. All of these require a build step.
 
 Can we enjoy a safely typed developer experience while "staying true" to the web platform? Let's first dive in and see what Types can give us.
 
@@ -78,11 +78,11 @@ Now, if we go back to our test file, we no longer see the error at `square('two'
 
 ![In the JavaScript version of the test file, Visual Studio Code no longer shows the error on line 3 when string is called with a string](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/02-js-square-two.png)
 
-If you're thinking "Oh well, JavaScript is dynamically typed, there's nothing to be done about it", then check this out: we actually can acheive type safety in vanilla JavaScript, using JSDoc comments.
+If you're thinking "Oh well, JavaScript is dynamically typed, there's nothing to be done about it", then check this out: we actually can achieve type safety in vanilla JavaScript, using JSDoc comments.
 
 ## Adding Types to JavaScript Using JSDoc
 
-[JSDoc](https://jsdoc.app/) is a long-standing inline documentation format for JavaScript. Typically, you might use it to automatically generate documentation for your server's API or your [web component's attributes](https://github.com/runem/web-component-analyzer). Today, we're going to use it to acheive type safety in our editor.
+[JSDoc](https://jsdoc.app/) is a long-standing inline documentation format for JavaScript. Typically, you might use it to automatically generate documentation for your server's API or your [web component's attributes](https://github.com/runem/web-component-analyzer). Today, we're going to use it to achieve type safety in our editor.
 
 First, add a JSDoc comment to your function. The docblockr plugin for [VSCode](https://marketplace.visualstudio.com/items?itemName=jeremyljackson.vs-docblock) and [atom](https://atom.io/packages/docblockr) can help you do this quickly.
 
@@ -121,10 +121,10 @@ Next, we'll configure the TypeScript compiler to check JavaScript files as well 
 
 > Hey! I thought you said we weren't going to be using TypeScript here?!
 
-You're right, although we will be authoring and publishing browser-standard JavaScript, our edidor tools will be using the [TypeScript Language Server](https://github.com/theia-ide/typescript-language-server) under the hood to provide us with type-checking.
+You're right, although we will be authoring and publishing browser-standard JavaScript, our editor tools will be using the [TypeScript Language Server](https://github.com/theia-ide/typescript-language-server) under the hood to provide us with type-checking.
 Doing this allows us to get exactly the same behaviour in VSCode and Atom as with TypeScript.
 
-![Screenshot of VSCode showing the same typechecking as in the first figure, but using the annotated JavaScript files](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/03-js-square-two-typed.png)
+![Screenshot of VSCode showing the same type-checking as in the first figure, but using the annotated JavaScript files](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/03-js-square-two-typed-error.png)
 
 We even get the same behaviour when running `tsc`.
 
@@ -147,7 +147,7 @@ expect(square(2, 10)).to.equal(14);
 expect(square(2, 'ten')).to.equal(14);
 ```
 
-However it appears that they probably should have spent those hours sleeping, as our original typecasting bug is still there.
+However, it appears that they probably should have spent those hours sleeping, as our original typecasting bug is still there.
 
 How can we deliver this critical (😉) feature to our customers quickly while still maintaining type safety?
 
@@ -159,7 +159,7 @@ export function square(number: number, offset = 0) {
 }
 ```
 
-The provided default value let's TypeScript statically analyse the code the *infer* the value.
+The provided default value let's TypeScript statically analyse the code to _infer_ values type.
 
 We can get the same effect using our vanilla-js-and-jsdoc production implementation:
 
@@ -215,7 +215,7 @@ export function square(number, offset = 0) {
 ### Publishing JavaScript Libraries
 
 Sadly, as of now `tsc` does not support generating `*.d.ts` files from JSDoc annotated files.
-We hope it will in the future, an in fact, the original [issue](https://github.com/microsoft/TypeScript/issues/7546) for the feature is still active, and it seems to be on the board for `3.7`. Don't take our word for it, the [Pull Request](https://github.com/microsoft/TypeScript/pull/32372) is in flight.
+We hope it will in the future, and in fact, the original [issue](https://github.com/microsoft/TypeScript/issues/7546) for the feature is still active, and it seems to be on board for `3.7`. Don't take our word for it, the [Pull Request](https://github.com/microsoft/TypeScript/pull/32372) is in flight.
 
 In fact, this works so well that we are using it in production for [open-wc](https://github.com/open-wc/open-wc/blob/master/package.json#L7).
 
@@ -223,7 +223,7 @@ In fact, this works so well that we are using it in production for [open-wc](htt
 > This is an unsupported version => if something does not work no one is going to fix it.
 > Therefore if your use-case is not supported you will need to wait for the official release of TypeScript to support it.
 
-We took the liberty of publishing a forked version [typescript-temporary-fork-for-jsdoc](https://www.npmjs.com/package/typescript-temporary-fork-for-jsdoc) which is just a copy of the above pull request. 
+We took the liberty of publishing a forked version [typescript-temporary-fork-for-jsdoc](https://www.npmjs.com/package/typescript-temporary-fork-for-jsdoc) which is just a copy of the above pull request.
 
 ## Generate TypeScript Definition Files for JSDoc Annotated JavaScript
 
@@ -252,6 +252,7 @@ We have exactly this setup at [open-wc](https://github.com/open-wc/open-wc) and 
 Congratulations you now have a type safety without a build step :tada:
 
 ## Conclusions
+
 To sum it all up - why are we fans of TypeScript even though it requires a build step?
 
 It comes down to 2 things:
@@ -272,4 +273,3 @@ Follow us on [Twitter](https://twitter.com/openwc), or follow me on my personal 
 Make sure to check out our other tools and recommendations at [open-wc.org](https://open-wc.org).
 
 Thanks to [Benny](https://dev.to/bennypowers), [Lars](https://github.com/LarsDenBakker) and [Pascal](https://twitter.com/passle_) for feedback and helping turn my scribbles to a followable story.
-
