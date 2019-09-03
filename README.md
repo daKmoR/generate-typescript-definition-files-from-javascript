@@ -239,6 +239,7 @@ So now that we have all the information. Let's make it work 💪!
 4. Do "type linting" via `tsc`, ideally in a `pre-commit` hook via [husky](https://github.com/typicode/husky)
 5. Have `tsconfig.build.json` with at least
     ```js
+    "noEmit": false,
     "declaration": true,
     "allowJs": true,
     "checkJs": true,
@@ -249,7 +250,9 @@ So now that we have all the information. Let's make it work 💪!
 
 We have exactly this setup at [open-wc](https://github.com/open-wc/open-wc) and it served us well so far.
 
-Congratulations you now have a type safety without a build step :tada:
+Congratulations you now have type safety without a build step :tada:
+
+Feel free to also check out [the repository for this post](https://github.com/daKmoR/generate-typescript-definition-files-from-javascript) and execute `npm run build:types` or `npm run lint:types` to see the magic live.
 
 ## Conclusions
 
