@@ -5,19 +5,15 @@ description: -
 tags: javascript, typescript, jsdoc, buildless
 ---
 
-First of all let me say that I have been putting this blog post off for quite a while.
-I am a little afraid that I am not going to do TypeScript justice.
-The reason for that is that we are going to use it heavily - but in a rather indirect way.
+At [open-wc](https://open-wc.org), we are big fans of [buildless](https://dev.to/open-wc/on-the-bleeding-edge-3cb8) development setups. We have [a post](https://dev.to/open-wc/developing-without-a-build-1-introduction-26ao) or [two](https://dev.to/open-wc/developing-without-a-build-2-es-dev-server-1cf5) about it 😄. [We believe](https://open-wc.org/about/rationales.html) that the future is all about coming back to the web platform. That means relying on native browser features in preference to userland or JavaScript solutions or development tools. That's why we have made it our mission to provide you the developer with the tools and techniques to use the platform *today*, even before legacy browsers are finally dropped.
 
-See - we are a big fan of a [buildless](https://dev.to/open-wc/on-the-bleeding-edge-3cb8) development setup. We have [a post](https://dev.to/open-wc/developing-without-a-build-1-introduction-26ao) or [two](https://dev.to/open-wc/developing-without-a-build-2-es-dev-server-1cf5) about it 😬
-It is [our belief](https://open-wc.org/about/rationales.html) that it is the best way to bring developers (you) and the platform (browser) back on the same table.
+This approach grants us tremendous advantages in <abbr title="developer experience">DX</abbr>, performance, and accessibility, but there are drawbacks. JavaScript, famously, is dynamically typed. Developers who want to enjoy type checking at development time will typically reach for Microsoft's TypeScript, Facebook's Flow, or Google's Clojure compiler. All of these require a build step. 
 
-Knowing this makes it hard to root for TypeScript as it is a [Transpiler Language]() - in other words, it requires a build step.
+Can we enjoy a safely typed developer experience while "staying true" to the web platform? Let's first dive in and see what Types can give us.
 
-So how come we are still fans?
-Let's dive into and see what Types can give you.
+## Examples in TypeScript
 
-#### We will start by writing some tests in TypeScript:
+Let's say we want a function which takes a number or string and returns the square.
 
 ```js
 // helpers.test.ts
@@ -27,9 +23,7 @@ expect(square(2)).to.equal(4);
 expect(square('two')).to.equal(4);
 ```
 
-Our plan is to accept a number or string and return the square of it.
-
-Let's implement it with TypeScript:
+Our function's TypeScript implementation might look like this:
 
 ```ts
 // helpers.ts
@@ -38,19 +32,16 @@ export function square(number: number) {
 }
 ```
 
-So yeah I know what you have been thinking - a string as an argument?
-While implementing we found out that it was a bad idea.
-And thanks to the power of types we can just go back to our code/tests and tada we immediately see in vscode that `square('two')` is not working.
+I know what you're thinking: a string as an argument? While implementing, we discovered that that was a bad idea, too.
 
-![01-ts-square-two](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/01-ts-square-two.png)
+Thanks to the type safety of TypeScript, and the mature ecosystem of developer tools surrounding it like IDE support, we can tell before we even run our tests that `square('two')` will not work.
 
-And we will, of course, get the same if we try to run `tsc`.
+![Screenshot of the source code of helpers.test.ts in Microsoft's Visual Studio Code editor, clearly showing an error signal on line 3, where the function square is called with a string as the argument](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/01-ts-square-two.png)
 
-```bash
-npm i -D typescript
-```
+If we run the TypeScript compiler `tsc` on our files, we'll see the same error:
 
 ```bash
+$ npm i -D typescript
 $ npx tsc
 helpers.tests.ts:8:19 - error TS2345: Argument of type '"two"' is not assignable to parameter of type 'number'.
 
@@ -60,9 +51,11 @@ helpers.tests.ts:8:19 - error TS2345: Argument of type '"two"' is not assignable
 Found 1 error.
 ```
 
-#### Let's reproduce it in JavaScript
+Type safety helped us catch this error before we pushed it to production. How can we accomplish this kind of type safety without using TypeScript as a build step?
 
-For the tests we only have to change the import to `*.js`.
+## Achieving Type Safety in Vanilla JavaScript
+
+Our first step will be to rename our files from `.ts` to `.js`. Then we will use [browser-friendly import statements](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) in our JavaScript files by using relative urls with `.js` file extensions:
 
 ```js
 // helpers.test.js
@@ -72,7 +65,7 @@ expect(square(2)).to.equal(4);
 expect(square('two')).to.equal(4);
 ```
 
-In the actual code, we'll remove the type
+Then, we will refactor our TypeScript function to JavaScript by stripping out the explicit type checks:
 
 ```js
 // helpers.js
@@ -81,24 +74,30 @@ export function square(number) {
 }
 ```
 
-So now, if we go back to the tests, we don't see that `square('two')` is wrong 😭.
+Now, if we go back to our test file, we no longer see the error at `square('two')`, when we pass the wrong type (string) to the function 😭!
 
-![02-js-square-two](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/02-js-square-two.png)
+![In the JavaScript version of the test file, Visual Studio Code no longer shows the error on line 3 when string is called with a string](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/02-js-square-two.png)
 
-And that's the power of types! But we can make it work for JavaScript as well 🤗
+If you're thinking "Oh well, JavaScript is dynamically typed, there's nothing to be done about it", then check this out: we actually can acheive type safety in vanilla JavaScript, using JSDoc comments.
 
-Let's add types via JsDoc
+## Adding Types to JavaScript Using JSDoc
+
+[JSDoc](https://jsdoc.app/) is a long-standing inline documentation format for JavaScript. Typically, you might use it to automatically generate documentation for your server's API or your [web component's attributes](https://github.com/runem/web-component-analyzer). Today, we're going to use it to acheive type safety in our editor.
+
+First, add a JSDoc comment to your function. The docblockr plugin for [VSCode](https://marketplace.visualstudio.com/items?itemName=jeremyljackson.vs-docblock) and [atom](https://atom.io/packages/docblockr) can help you do this quickly.
 
 ```js
 /**
+ * The square of a number
  * @param {number} number
+ * @return {number}
  */
 export function square(number) {
   return number * number;
 }
 ```
 
-and configure TypeScript to check for JavaScript as well by adding a `tsconfig.json`.
+Next, we'll configure the TypeScript compiler to check JavaScript files as well as TypeScript files, by adding a `tsconfig.json` to our project's root directory.
 
 ```json
 {
@@ -120,9 +119,12 @@ and configure TypeScript to check for JavaScript as well by adding a `tsconfig.j
 }
 ```
 
-Doing this allows us to get exactly the same behaviour in VSCode as with TypeScript.
+> Hey! I thought you said we weren't going to be using TypeScript here?!
 
-![03-js-square-two-typed](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/03-js-square-two-typed.png)
+You're right, although we will be authoring and publishing browser-standard JavaScript, our edidor tools will be using the [TypeScript Language Server](https://github.com/theia-ide/typescript-language-server) under the hood to provide us with type-checking.
+Doing this allows us to get exactly the same behaviour in VSCode and Atom as with TypeScript.
+
+![Screenshot of VSCode showing the same typechecking as in the first figure, but using the annotated JavaScript files](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/03-js-square-two-typed.png)
 
 We even get the same behaviour when running `tsc`.
 
@@ -136,17 +138,20 @@ test/helpers.tests.js:8:19 - error TS2345: Argument of type '"two"' is not assig
 Found 1 error.
 ```
 
-### Enhancing our code
+## Refactoring
 
-Let's assume we want to also add an offset (best I could come up with :see_no_evil:)
-e.g.
+Great, we've written our `square` feature, including type checks, and pushed it to production. But some time later, the product team came to us saying that an important customer wants to be able to increment the numbers we square for them before we apply the power. This time, the product team already spoke with QA, who worked through the night to provide the following tests for our refactored feature:
 
 ```js
 expect(square(2, 10)).to.equal(14);
 expect(square(2, 'ten')).to.equal(14);
 ```
 
-First up `TypeScript`:
+However it appears that they probably should have spent those hours sleeping, as our original typecasting bug is still there.
+
+How can we deliver this critical (😉) feature to our customers quickly while still maintaining type safety?
+
+If we had implemented the feature in TypeScript, you might be surprised to learn that we don't need to add explicit type annotations to the second parameter, since we will supply it with a default value.
 
 ```ts
 export function square(number: number, offset = 0) {
@@ -154,21 +159,22 @@ export function square(number: number, offset = 0) {
 }
 ```
 
-I'm sure you're wondering why we don't have a type here?
-It is because a default value let's TypeScript set the type based on this default value.
+The provided default value let's TypeScript statically analyse the code the *infer* the value.
 
-And now the same for `JavaScript`:
+We can get the same effect using our vanilla-js-and-jsdoc production implementation:
 
 ```js
 /**
+ * The square of a number
  * @param {number} number
+ * @return {number}
  */
 export function square(number, offset = 0) {
   return number * number + offset;
 }
 ```
 
-In both cases, it will give
+In both cases, `tsc` will give the error:
 
 ```bash
 test/helpers.tests.js:13:22 - error TS2345: Argument of type '"ten"' is not assignable to parameter of type 'number'.
@@ -177,33 +183,22 @@ test/helpers.tests.js:13:22 - error TS2345: Argument of type '"ten"' is not assi
                         ~~~~~
 ```
 
-Also in both cases, the only thing we needed to add was `offset = 0` as it contains the type information already.
+Also in both cases, the only thing we needed to add was `offset = 0` as it contains the type information already. If we wanted to add an explicit type definition, we could have added a second `@param {number} offset` annotation, but for our purposes, this was unnecessary.
 
-If you wanna know more about how to use JSDoc for types I can recommend you these blog posts.
+## Publishing a Library
 
-- [Type-Safe Web Components with JSDoc](https://dev.to/dakmor/type-safe-web-components-with-jsdoc-4icf)
-- [Type Safe JavaScript with JSDoc](https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76)
+If you want people to be able to use your code, you're going to need to publish it at some point. For JavaScript and TypeScript, that typically means `npm`.
+You will also want to provide your users with the same editor-level type safety that you've been enjoying.
+To accomplish that, you can publish Type Declaration files (`*.d.ts`)in the root directory of the package you are publishing. TypeScript and the TypeScript Language Sever will respect those declaration files by default whenever they are found in a project's `node_modules` folder.
 
-### Publishing a library
-
-If you want people to be able to use your code, you're going to need to publish it at some point. Usually, we do this on npm.
-You will also want to provide those types to your users.
-That means you will need to have `*.d.ts` files in the package you are publishing.
-As those are the only files that `TypeScript` respects by default in the `node_modules` folder.
-
-#### What does it means for TypeScript?
-
-When we publish we will run `tsc` with these settings
+For TypeScript files, this is straightforward, we just add these options to `tsconfig.json`...
 
 ```json
 "noEmit": false,
 "declaration": true,
 ```
 
-that way TypeScript will generate `*.js` and `*.d.ts` files.
-It can do so fully automatically as it knows all the types - as it is _Type_Script.
-
-The output will be
+...and TypeScript will generate `*.js` and `*.d.ts` files for us.
 
 ```js
 // helpers.d.ts
@@ -215,61 +210,66 @@ export function square(number, offset = 0) {
 }
 ```
 
-e.g. the output of the js file is exactly the same we wrote in our js version.
+(Note that the output of the `js` file is exactly the same we wrote in our js version.)
 
-#### What does it means for JavaScript?
+### Publishing JavaScript Libraries
 
-Sadly as of now `tsc` does not support generating `*.d.ts` files from JSDoc annotated files.
-But it probably will in the future. The original [issue](https://github.com/microsoft/TypeScript/issues/7546) is from 2016 but recently it has been said that it's planned for version `3.6` (but it didn't make it into beta) so it seems to be on the board for `3.7`. However, don't take my word for it as here is a working [Pull Request](https://github.com/microsoft/TypeScript/pull/32372).
+Sadly, as of now `tsc` does not support generating `*.d.ts` files from JSDoc annotated files.
+We hope it will in the future, an in fact, the original [issue](https://github.com/microsoft/TypeScript/issues/7546) for the feature is still active, and it seems to be on the board for `3.7`. Don't take our word for it, the [Pull Request](https://github.com/microsoft/TypeScript/pull/32372) is in flight.
 
-And it is working so great that we are using it even in production for [open-wc](https://github.com/open-wc/open-wc/blob/master/package.json#L7).
+In fact, this works so well that we are using it in production for [open-wc](https://github.com/open-wc/open-wc/blob/master/package.json#L7).
 
 > !WARNING!
 > This is an unsupported version => if something does not work no one is going to fix it.
 > Therefore if your use-case is not supported you will need to wait for the official release of TypeScript to support it.
 
-So you have been warned if you still think it's a good idea to test it you feel free to do so.
-We published a forked version [typescript-temporary-fork-for-jsdoc](https://www.npmjs.com/package/typescript-temporary-fork-for-jsdoc) which is just a copy of what the above Pull Request is providing. (again to be clear - we did not change anything it is a temporary fork which is good enough for our use case).
+We took the liberty of publishing a forked version [typescript-temporary-fork-for-jsdoc](https://www.npmjs.com/package/typescript-temporary-fork-for-jsdoc) which is just a copy of the above pull request. 
 
-## Generate TypeScript Definition Files for JSDoc annotated JavaScript
+## Generate TypeScript Definition Files for JSDoc Annotated JavaScript
 
-So now that we have all the information. Let's just make it work.
+So now that we have all the information. Let's make it work 💪!
 
-1. Write your code in js and apply JSDoc where needed
+1. Write your code in JS and apply JSDoc where needed
 2. Use the forked TypeScript `npm i -D typescript-temporary-fork-for-jsdoc`
-3. Have a `tsconfig.json` with at least
-
-```js
-"allowJs": true,
-"checkJs": true,
-```
-
-4. Do "type linting" via `tsc`
+3. Have a `tsconfig.json` with at least the following:
+    ```js
+    "allowJs": true,
+    "checkJs": true,
+    ```
+4. Do "type linting" via `tsc`, ideally in a `pre-commit` hook via [husky](https://github.com/typicode/husky)
 5. Have `tsconfig.build.json` with at least
+    ```js
+    "declaration": true,
+    "allowJs": true,
+    "checkJs": true,
+    "emitDeclarationOnly": true,
+    ```
+6. Generate Types via `tsc -p tsconfig.build.types.json`, ideally in <abbr title="continuous integration">CI</abbr>
+7. Publish both your `*.js` and `*.d.ts` files
 
-```js
-"declaration": true,
-"allowJs": true,
-"checkJs": true,
-"emitDeclarationOnly": true,
-```
-
-6. Generate Types via `tsc -p tsconfig.build.types.json`
-7. Publish your `*.js` AND `*.d.ts` files
-
-Ideally doing the type linting happens in a `pre-commit` hook and generating the `*.d.ts` files happens in the ci for publishing.
 We have exactly this setup at [open-wc](https://github.com/open-wc/open-wc) and it served us well so far.
 
 Congratulations you now have a type safety without a build step :tada:
 
-#### To sum it all up - why are we fans of TypeScript even though it requires a build step?
+## Conclusions
+To sum it all up - why are we fans of TypeScript even though it requires a build step?
 
 It comes down to 2 things:
 
-- Typings can be immensely useful (type safety, auto-complete, documentation, ...) for you and/or your users
+- Typings can be immensely useful (type safety, auto-complete, documentation, etc.) for you and/or your users
 - TypeScript is very flexible and supports types for "just" JavaScript as well
+
+## Further Resources
+
+If you'd like to know more about using JSDoc for type safety, we recommend the following blog posts:
+
+- [Type-Safe Web Components with JSDoc](https://dev.to/dakmor/type-safe-web-components-with-jsdoc-4icf)
+- [Type Safe JavaScript with JSDoc](https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76)
+
+## Acknowledgements
 
 Follow us on [Twitter](https://twitter.com/openwc), or follow me on my personal [Twitter](https://twitter.com/dakmor).
 Make sure to check out our other tools and recommendations at [open-wc.org](https://open-wc.org).
 
 Thanks to [Benny](https://dev.to/bennypowers), [Lars](https://github.com/LarsDenBakker) and [Pascal](https://twitter.com/passle_) for feedback and helping turn my scribbles to a followable story.
+
