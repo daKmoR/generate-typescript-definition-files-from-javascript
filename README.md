@@ -1,7 +1,7 @@
 ---
 title: Generating TypeScript Definition Files from JavaScript
 published: false
-description: -
+description: Writing JavaScript while still being type-safe and automatically generating TypeScript Definition files for publishing. How you can do it and why you should care.
 tags: javascript, typescript, jsdoc, buildless
 ---
 
