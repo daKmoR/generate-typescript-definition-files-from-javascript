@@ -60,7 +60,7 @@ helpers.tests.ts:8:19 - error TS2345: Argument of type '"two"' is not assignable
 Found 1 error.
 ```
 
-#### Let's make the same in JavaScript
+#### Let's reproduce it in JavaScript
 
 For the tests we only have to change the import to `*.js`.
 
