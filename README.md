@@ -62,7 +62,7 @@ Found 1 error.
 
 #### Let's make the same in JavaScript
 
-For the tests only the import change to `*.js`.
+For the tests we only have to change the import to `*.js`.
 
 ```js
 // helpers.test.js
@@ -72,7 +72,7 @@ expect(square(2)).to.equal(4);
 expect(square('two')).to.equal(4);
 ```
 
-For the code, we removed the type
+In the actual code, we'll remove the type
 
 ```js
 // helpers.js
@@ -81,11 +81,11 @@ export function square(number) {
 }
 ```
 
-So if we now go back to the test we do not see that `square('two')` is wrong 😭.
+So now, if we go back to the tests, we don't see that `square('two')` is wrong 😭.
 
 ![02-js-square-two](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/02-js-square-two.png)
 
-So that is the power of types. But we can make it work for JavaScript as well 🤗
+And that's the power of types! But we can make it work for JavaScript as well 🤗
 
 Let's add types via JsDoc
 
@@ -120,7 +120,7 @@ and configure TypeScript to check for JavaScript as well by adding a `tsconfig.j
 }
 ```
 
-Doing this allows as to get exactly the same behaviour in VSCode as with TypeScript.
+Doing this allows us to get exactly the same behaviour in VSCode as with TypeScript.
 
 ![03-js-square-two-typed](https://raw.githubusercontent.com/daKmoR/generate-typescript-definition-files-from-javascript/master/images/03-js-square-two-typed.png)
 
@@ -154,7 +154,7 @@ export function square(number: number, offset = 0) {
 }
 ```
 
-I assume you are wondering why we do not have a type here?
+I'm sure you're wondering why we don't have a type here?
 It is because a default value let's TypeScript set the type based on this default value.
 
 And now the same for `JavaScript`:
@@ -186,7 +186,7 @@ If you wanna know more about how to use JSDoc for types I can recommend you thes
 
 ### Publishing a library
 
-If someone is to use your code you will need to publish it. Usually, that happens on npm.
+If you want people to be able to use your code, you're going to need to publish it at some point. Usually, we do this on npm.
 You will also want to provide those types to your users.
 That means you will need to have `*.d.ts` files in the package you are publishing.
 As those are the only files that `TypeScript` respects by default in the `node_modules` folder.
@@ -201,7 +201,7 @@ When we publish we will run `tsc` with these settings
 ```
 
 that way TypeScript will generate `*.js` and `*.d.ts` files.
-It can do so fully automatic as it knows all the types - as it is TypeScript.
+It can do so fully automatically as it knows all the types - as it is _Type_Script.
 
 The output will be
 
@@ -220,7 +220,7 @@ e.g. the output of the js file is exactly the same we wrote in our js version.
 #### What does it means for JavaScript?
 
 Sadly as of now `tsc` does not support generating `*.d.ts` files from JSDoc annotated files.
-But it probably will be in the future. The original [issue](https://github.com/microsoft/TypeScript/issues/7546) is from 2016 but recently it has been said was planned for `3.6` (but it didn't make it into beta) so it seems it on the board for `3.7`. However, don't take my word for it as here is a working [Pull Request](https://github.com/microsoft/TypeScript/pull/32372).
+But it probably will in the future. The original [issue](https://github.com/microsoft/TypeScript/issues/7546) is from 2016 but recently it has been said that it's planned for version `3.6` (but it didn't make it into beta) so it seems to be on the board for `3.7`. However, don't take my word for it as here is a working [Pull Request](https://github.com/microsoft/TypeScript/pull/32372).
 
 And it is working so great that we are using it even in production for [open-wc](https://github.com/open-wc/open-wc/blob/master/package.json#L7).
 
@@ -258,13 +258,13 @@ So now that we have all the information. Let's just make it work.
 7. Publish your `*.js` AND `*.d.ts` files
 
 Ideally doing the type linting happens in a `pre-commit` hook and generating the `*.d.ts` files happens in the ci for publishing.
-We have exactly this setup at [open-wc](https://github.com/open-wc/open-wc) and it served as well so far.
+We have exactly this setup at [open-wc](https://github.com/open-wc/open-wc) and it served us well so far.
 
 Congratulations you now have a type safety without a build step :tada:
 
 #### To sum it all up - why are we fans of TypeScript even though it requires a build step?
 
-It comes down two 2 things
+It comes down to 2 things:
 
 - Typings can be immensely useful (type safety, auto-complete, documentation, ...) for you and/or your users
 - TypeScript is very flexible and supports types for "just" JavaScript as well
@@ -272,4 +272,4 @@ It comes down two 2 things
 Follow us on [Twitter](https://twitter.com/openwc), or follow me on my personal [Twitter](https://twitter.com/dakmor).
 Make sure to check out our other tools and recommendations at [open-wc.org](https://open-wc.org).
 
-Thanks to [Benny](https://dev.to/bennypowers) and [Lars](https://github.com/LarsDenBakker) for feedback and helping turn my scribbles to a followable story.
+Thanks to [Benny](https://dev.to/bennypowers), [Lars](https://github.com/LarsDenBakker) and [Pascal](https://twitter.com/passle_) for feedback and helping turn my scribbles to a followable story.
